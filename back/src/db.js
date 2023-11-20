@@ -35,18 +35,12 @@ let capsEntries = entries.map((entry) => [
 sequelize.models = Object.fromEntries(capsEntries);
 
 const {
-//   Usuario,
-//   Empresas,
-//   NivelJerarquico,
-//   Tarea,
-//   WorkFlow,
-//   Plan,
-//   Sector,
-//   Paises,
-//   ContactoVentas,
-//   Archivos,
-//   ArchivoTareas,
-//   Testimonios
+Admin,
+Archivo,
+Area,
+Informe,
+Paciente,
+Terapeuta
 } = sequelize.models;
 
 
@@ -55,24 +49,34 @@ const {
 //  RELACIONES
 
 // Aca vendrian las relaciones
-// Tarea.hasMany(ArchivoTareas, { foreignKey: 'tareaId' });
-// ArchivoTareas.belongsTo(Tarea, { foreignKey: "tareaId" });
+// En el modelo Paciente
+Paciente.hasMany(Informe, { foreignKey: 'pacienteId' });
 
-// Testimonios.belongsTo(Usuario, { foreignKey: 'usuarioId' });
+// En el modelo Informe
+Informe.belongsTo(Paciente, { foreignKey: 'pacienteId' });
+Informe.belongsTo(Terapeuta, { foreignKey: 'terapuetaId' });
 
-// Empresas.belongsTo(Plan, { foreignKey: 'planId' });//uno a muchos
-// Plan.hasMany(Empresas, { foreignKey: "planId" }); //uno a muchos
-// WorkFlow.hasMany(Archivos, { foreignKey: "workFlowId" }); //uno a uno
-// WorkFlow.hasOne(Archivos, { foreignKey: "workflowsId" }); //uno a uno
-// Empresas.hasMany(Usuario, { foreignKey: "empresasId" }); //uno a muchos
-// Empresas.hasMany(WorkFlow, { foreignKey: "empresasId" }); //uno a muchos
-// //muchos a muchos
-// Usuario.belongsToMany(Tarea, { through: "usuarioTarea" });
-// Tarea.belongsToMany(Usuario, { through: "usuarioTarea" });
-// //muchos a muchos
-// Usuario.belongsToMany(WorkFlow, { through: "usuarioWorkFlow" });
-// WorkFlow.belongsToMany(Usuario, { through: "usuarioWorkFlow" });
 
+// En el modelo Archivo
+Archivo.belongsTo(Paciente, { foreignKey: 'pacienteId' });
+Archivo.belongsToMany(Terapeuta, { as: 'VoluntariosComparten', through: 'CompartenArchivos' });
+
+
+// En el modelo Terapeuta
+Terapeuta.belongsToMany(Paciente, { through: 'AsignacionTerapeuta', foreignKey: 'terapeutaId' });
+Paciente.belongsToMany(Terapeuta, { through: 'AsignacionTerapeuta', foreignKey: 'pacienteId' });
+
+// En el modelo Area-teraputa
+Area.belongsToMany(Terapeuta, { through: 'AsignacionTerapeuta', foreignKey: 'areaId' });
+Terapeuta.belongsToMany(Area, { through: 'AsignacionTerapeuta', foreignKey: 'terapeutaId' });
+
+// En el modelo Paciente
+Paciente.belongsToMany(Terapeuta, { through: 'AsignacionTerapeuta', foreignKey: 'pacienteId' });
+Terapeuta.belongsToMany(Paciente, { through: 'AsignacionTerapeuta', foreignKey: 'terapeutaId' });
+
+// En el modelo Area-paciente
+Paciente.belongsToMany(Area, { through: 'AsignacionPacienteArea', foreignKey: 'pacienteId' });
+Area.belongsToMany(Paciente, { through: 'AsignacionPacienteArea', foreignKey: 'areaId' });
 
 
 
